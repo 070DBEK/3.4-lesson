@@ -24,7 +24,7 @@ class Book(models.Model):
         return self.title
 
 
-class Copy(models.Model):
+class BookCopy(models.Model):
     CONDITION_CHOICES = [
         ('new', 'New'),
         ('good', 'Good'),
@@ -34,7 +34,7 @@ class Copy(models.Model):
 
     book = models.ForeignKey(Book, on_delete=models.CASCADE, related_name='copies')
     inventory_number = models.CharField(max_length=100, unique=True)
-    condition = models.CharField(max_length=10, choices=CONDITION_CHOICES)  # choices qo‘shildi
+    condition = models.CharField(max_length=10, choices=CONDITION_CHOICES)
     is_available = models.BooleanField(default=True)
     added_date = models.DateTimeField(auto_now_add=True)
 
@@ -44,3 +44,20 @@ class Copy(models.Model):
     def __str__(self):
         return f"{self.book.title} - {self.inventory_number} ({self.get_condition_display()})"
 
+
+class BookLending(models.Model):
+    STATUS_CHOICES = [
+        ('active', 'Active'),
+        ('returned', 'Returned'),
+        ('overdue', 'Overdue')
+    ]
+    book_copy = models.ForeignKey(BookCopy, on_delete=models.CASCADE, related_name='book_lendings')
+    borrowed_name = models.CharField(max_length=100)
+    borrowed_email = models.EmailField()
+    borrowed_date = models.DateTimeField(auto_now_add=True)
+    due_date = models.DateTimeField()
+    returned_date = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='active')
+
+    def __str__(self):
+        return self.borrowed_name
