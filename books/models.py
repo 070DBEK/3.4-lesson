@@ -40,6 +40,7 @@ class BookCopy(models.Model):
 
     class Meta:
         verbose_name_plural = "copies"
+        ordering = ['added_date']
 
     def __str__(self):
         return f"{self.book.title} - {self.inventory_number} ({self.get_condition_display()})"
